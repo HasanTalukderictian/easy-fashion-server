@@ -54,6 +54,15 @@ async function run() {
 
     })
 
+    app.get('/bookings', async(req, res) => {
+      let query = {}
+       if(req.query?.email){
+         query = {email : req.query.email}
+       }
+      const result = await bookingsCollection.find(query).toArray();
+      res.send(result);
+    })
+
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     // Send a ping to confirm a successful connection
