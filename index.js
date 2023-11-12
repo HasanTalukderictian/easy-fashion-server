@@ -3,7 +3,7 @@ const app = express()
 require('dotenv').config();
 const cors = require('cors');
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 // middileware 
 
@@ -26,17 +26,32 @@ async function run() {
     
 
     const productdatabase = client.db("Easy_fashion").collection("products");
+    const bookingsCollection = client.db("Easy_fashion").collection("bookings");
 
     app.get('/products', async(req, res) => {
         const result = await productdatabase.find().toArray()
         res.send(result);
     })
 
+
+    app.get('/products/:id', async(req, res) => {
+        const id = req.params.id;
+        const filter = {_id : new ObjectId(id)}
+        const result = await productdatabase.findOne(filter)
+        res.send(result);
+    })
+
     // total number of product count
 
-    app.get('/totalProducts', async(req, res) => {
-        const result = await productdatabase.estimatedDocumentCount();
-        res.send({totalProducts : result})
+    
+
+    app.post('/bookings/:id', async(req, res) => {
+        const id = req.params.id;
+        const bookings = req.body;
+        console.log(bookings);
+        const result = await bookingsCollection.insertOne(bookings);
+        res.send(result);
+
     })
 
     // Connect the client to the server	(optional starting in v4.7)
